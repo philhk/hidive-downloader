@@ -1,5 +1,6 @@
 import { ChildProcessWithoutNullStreams, spawn } from 'child_process'
 import path from 'path'
+import which from 'which';
 
 export interface Subtitle {
     name: string,
@@ -11,8 +12,9 @@ export interface Map {
 }
 
 export class FFmpeg {
-    public convertSubtitle(filePath: string, data: Buffer, language: string) {
-        const process = spawn(path.resolve('./ffmpeg/ffmpeg.exe'),
+    public async convertSubtitle(filePath: string, data: Buffer, language: string) {
+        const ffmpegBin = await this.getFFmpegBin();
+        const process = spawn(ffmpegBin,
             [
                 '-y',
                 '-i', '-',
@@ -27,8 +29,9 @@ export class FFmpeg {
         return this.promisifyClose(process, filePath)
     }
 
-    public convertVideo(filePath: string) {
-        const process = spawn(path.resolve('./ffmpeg/ffmpeg.exe'),
+    public async convertVideo(filePath: string) {
+        const ffmpegBin = await this.getFFmpegBin();
+        const process = spawn(ffmpegBin,
             [
                 '-y',
                 '-i', '-',
@@ -43,7 +46,7 @@ export class FFmpeg {
         }
     }
 
-    public mergeVideoAndSubtitles(filePath: string, videoPath: string, subtitles: Subtitle[]) {
+    public async mergeVideoAndSubtitles(filePath: string, videoPath: string, subtitles: Subtitle[]) {
         let currentMap = 0
         const getNextMap = () => currentMap = currentMap + 1
         const subtitlesMaps: (Subtitle & Map)[] = subtitles.map(subtitle => {
@@ -54,7 +57,8 @@ export class FFmpeg {
             }
         })
 
-        const process = spawn(path.resolve('./ffmpeg/ffmpeg.exe'),
+        const ffmpegBin = await this.getFFmpegBin();
+        const process = spawn(ffmpegBin,
             [
                 '-y',
                 '-i', videoPath,
@@ -69,10 +73,16 @@ export class FFmpeg {
         return this.promisifyClose(process, filePath)
     }
 
-    private promisifyClose<T = void>(process: ChildProcessWithoutNullStreams, value?: T) {
+    private async promisifyClose<T = void>(process: ChildProcessWithoutNullStreams, value?: T) {
         return new Promise<T>((res) => {
             process.stdin.end()
             return process.on('close', () => res(value as any))
         })
+    }
+    
+    private async getFFmpegBin(): Promise<string> {
+        const ffmpegPath = await which('ffmpeg');
+
+        return ffmpegPath ?? path.resolve('./ffmpeg/ffmpeg.exe');
     }
 }
