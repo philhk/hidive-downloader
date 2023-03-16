@@ -10,6 +10,7 @@
 - Subtitles are added to MKV
 
 # How to use
+- Download and install [NodeJS](https://nodejs.org/en/download) if you haven't already
 - Download the latest [release](https://github.com/philhk/hidive-downloader/releases)
 - Extract the content to a folder
 - Run `npm install` > `npm run build` in a terminal
