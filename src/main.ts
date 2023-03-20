@@ -252,7 +252,7 @@ async function downloadSeries(hidiveDao: HidiveDao) {
         const tempEpisodePath = fileManager.getTempPath(`${episodeFileName}.mkv`)
         const episodePath = fileManager.getOutputPath(`${episodeFileName}.mkv`)
 
-        const ffmpegConvertVideoProcess = ffmpeg.convertVideo(tempEpisodePath)
+        const ffmpegConvertVideoProcess = await ffmpeg.convertVideo(tempEpisodePath)
 
         const bar = multiBar.create(mediasRes.segments.length, 0, { download: 0, episode: `${selectedSeries.Name} - ${episode.Name}` })
 

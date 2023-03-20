@@ -21,12 +21,14 @@
     "typescript": "^4.8.4"
   },
   "dependencies": {
+    "@types/which": "^2.0.1",
     "async": "^3.2.4",
     "axios": "^0.27.2",
     "better-sqlite3": "^7.6.2",
     "cli-progress": "^3.11.2",
     "fs-extra": "^10.1.0",
     "inquirer": "^9.1.2",
-    "m3u8-parser": "^6.0.0"
+    "m3u8-parser": "^6.0.0",
+    "which": "^3.0.0"
   }
 }
